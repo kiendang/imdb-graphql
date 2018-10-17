@@ -1,0 +1,9 @@
+.DS_Store
+pyproject.lock
+__pycache__
+.ipynb_checkpoints
+.vimrc
+.sublime-project
+*.tsv
+*.gz
+*.swp

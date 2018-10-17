@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "imdb-graphql"
+version = "0.1.0"
+description = "GraphQL API for IMDB"
+authors = ["kiendang <kiend@pm.me>"]
+
+[tool.poetry.dependencies]
+python = "*"
+sqlalchemy = "^1.2"
+graphene = "^2.1"
+psycopg2-binary = "^2.7"
+flask = "^1.0"
+flask-graphql = "^2.0"
+bidict = "^0.17.3"
+sqlalchemy-utils = "^0.33.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"
+ipython = "^6.5"
+python-language-server = "^0.21.2"
