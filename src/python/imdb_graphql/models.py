@@ -9,7 +9,7 @@ class Title(Base):
 
     imdbID = Column('tconst', String, primary_key=True)
     titleType = Column('titletype', String)
-    type = column_property(
+    _type = column_property(
         case(
             {
                 'tvSeries': 'movie',
@@ -37,7 +37,7 @@ class Title(Base):
     numVotes = association_proxy('rating', 'numVotes')
     title_search_col = Column('title_search_col')
 
-    __mapper_args__ = {'polymorphic_on': type}
+    __mapper_args__ = {'polymorphic_on': _type}
 
 class Movie(Title):
     __mapper_args__ = {'polymorphic_identity': 'movie'}

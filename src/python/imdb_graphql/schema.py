@@ -1,5 +1,5 @@
 import graphene
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, Integer, cast
 
 from .models import (
     Title as TitleModel,
@@ -15,6 +15,7 @@ from .get_fields import get_fields
 
 class Title(graphene.Interface):
     imdbID = graphene.String()
+    titleType = graphene.String()
     primaryTitle = graphene.String()
     originalTitle = graphene.String()
     isAdult = graphene.Int()
@@ -68,9 +69,9 @@ class Query(graphene.ObjectType):
     def resolve_title(self, info, imdbID):
         u = session.query(TitleModel).filter_by(imdbID=imdbID).first()
 
-        if u.type == 'series':
+        if u._type == 'series':
             res = query_to_item(Series, u, info)
-        elif u.type == 'episode':
+        elif u._type == 'episode':
             res = query_to_item(Episode, u, info)
         else:
             res = query_to_item(Movie, u, info)
@@ -94,8 +95,9 @@ class Query(graphene.ObjectType):
             .filter(TitleModel.title_search_col.op('@@')(tsquery))
             .join(TitleModel.rating)
             .order_by(
+                desc(RatingModel.numVotes >= 1000),
+                desc(TitleModel.primaryTitle.ilike(title)),
                 desc(RatingModel.numVotes),
-                desc(TitleModel.primaryTitle.ilike(f'\'{title}\'')),
                 desc(func.ts_rank_cd(TitleModel.title_search_col, tsquery, 1))
             )
             .limit(result)
