@@ -1,4 +1,5 @@
 import graphene
+from graphene_sqlalchemy import SQLAlchemyObjectType
 from sqlalchemy import func, desc, Integer, cast
 
 from .models import (
@@ -26,33 +27,34 @@ class Title(graphene.Interface):
     averageRating = graphene.Float()
     numVotes = graphene.Int()
 
-class Movie(graphene.ObjectType):
+class Movie(SQLAlchemyObjectType):
     class Meta:
+        model = MovieModel
         interfaces = (Title, )
 
-class Episode(graphene.ObjectType):
+class Episode(SQLAlchemyObjectType):
     class Meta:
+        model = EpisodeModel
         interfaces = (Title, )
 
     seasonNumber = graphene.Int()
     episodeNumber = graphene.Int()
 
-class Series(graphene.ObjectType):
+class Series(SQLAlchemyObjectType):
     class Meta:
+        model = SeriesModel
         interfaces = (Title, )
 
     episodes = graphene.List(Episode)
 
     def resolve_episodes(self, info):
         return(
-            session
-            .query(EpisodeModel)
+            Episode
+            .get_query(info)
             .join(EpisodeModel.info)
             .filter_by(seriesID=self.imdbID)
-            .order_by(
-                EpisodeInfoModel.seasonNumber,
-                EpisodeInfoModel.episodeNumber
-            )
+            .order_by(EpisodeInfoModel.seasonNumber,
+                EpisodeInfoModel.episodeNumber)
         )
 
 class Query(graphene.ObjectType):
@@ -79,13 +81,13 @@ class Query(graphene.ObjectType):
         return res
 
     def resolve_movie(self, info, imdbID):
-        return session.query(MovieModel).filter_by(imdbID=imdbID).first()
+        return Movie.get_query(info).filter_by(imdbID=imdbID).first()
 
     def resolve_series(self, info, imdbID):
-        return session.query(SeriesModel).filter_by(imdbID=imdbID).first()
+        return Series.get_query(info).filter_by(imdbID=imdbID).first()
 
     def resolve_episode(self, info, imdbID):
-        return session.query(EpisodeModel).filter_by(imdbID=imdbID).first()
+        return Episode.get_query(info).filter_by(imdbID=imdbID).first()
 
     def resolve_search(sef, info, title, result):
         tsquery = func.to_tsquery(f'\'{title}\'')

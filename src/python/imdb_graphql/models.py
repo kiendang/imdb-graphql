@@ -12,7 +12,7 @@ class Title(Base):
     _type = column_property(
         case(
             {
-                'tvSeries': 'movie',
+                'tvSeries': 'series',
                 'tvMiniSeries': 'series',
                 'tvEpisode': 'episode'
             },
