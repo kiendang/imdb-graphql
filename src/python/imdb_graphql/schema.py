@@ -75,16 +75,7 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_title(self, info, imdbID):
-        u = session.query(TitleModel).filter_by(imdbID=imdbID).first()
-
-        if u._type == 'series':
-            res = query_to_item(Series, u, info)
-        elif u._type == 'episode':
-            res = query_to_item(Episode, u, info)
-        else:
-            res = query_to_item(Movie, u, info)
-
-        return res
+        return session.query(TitleModel).filter_by(imdbID=imdbID).first()
 
     def resolve_movie(self, info, imdbID):
         return Movie.get_query(info).filter_by(imdbID=imdbID).first()
