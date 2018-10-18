@@ -1,6 +1,6 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from sqlalchemy import func, desc, Integer, cast
+from sqlalchemy import func, desc
 
 from .models import (
     Title as TitleModel,
@@ -68,7 +68,7 @@ class Query(graphene.ObjectType):
     series = graphene.Field(Series, imdbID=graphene.String())
     episode = graphene.Field(Episode, imdbID=graphene.String())
     search = graphene.Field(
-        graphene.List(Movie),
+        graphene.List(Title),
         title=graphene.String(),
         result=graphene.Int()
     )
