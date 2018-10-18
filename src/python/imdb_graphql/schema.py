@@ -64,14 +64,14 @@ class Episode(SQLAlchemyObjectType):
     series = graphene.Field(Series)
 
 class Query(graphene.ObjectType):
-    title = graphene.Field(Title, imdbID=graphene.String())
-    movie = graphene.Field(Movie, imdbID=graphene.String())
-    series = graphene.Field(Series, imdbID=graphene.String())
-    episode = graphene.Field(Episode, imdbID=graphene.String())
+    title = graphene.Field(Title, imdbID=graphene.String(required=True))
+    movie = graphene.Field(Movie, imdbID=graphene.String(required=True))
+    series = graphene.Field(Series, imdbID=graphene.String(required=True))
+    episode = graphene.Field(Episode, imdbID=graphene.String(required=True))
     search = graphene.Field(
         graphene.List(Title),
-        title=graphene.String(),
-        result=graphene.Int()
+        title=graphene.String(required=True),
+        result=graphene.Int(default_value=5)
     )
 
     def resolve_title(self, info, imdbID):

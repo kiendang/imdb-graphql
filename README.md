@@ -38,11 +38,11 @@ type Movie implements Title {
 }
 
 type Query {
-  title(imdbID: String): Title
-  movie(imdbID: String): Movie
-  series(imdbID: String): Series
-  episode(imdbID: String): Episode
-  search(title: String, result: Int): [Title]
+  title(imdbID: String!): Title
+  movie(imdbID: String!): Movie
+  series(imdbID: String!): Series
+  episode(imdbID: String!): Episode
+  search(title: String!, result: Int = 5): [Title]
 }
 
 type Series implements Title {
