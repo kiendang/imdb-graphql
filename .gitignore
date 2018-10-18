@@ -1,7 +1,9 @@
 .DS_Store
 pyproject.lock
+poetry.lock
 __pycache__
 .ipynb_checkpoints
+*.egg-info
 .vimrc
 .sublime-project
 *.tsv
