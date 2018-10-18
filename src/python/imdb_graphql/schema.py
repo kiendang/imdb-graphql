@@ -107,7 +107,7 @@ class Query(graphene.ObjectType):
     def resolve_episode(self, info, imdbID):
         return Episode.get_query(info).filter_by(imdbID=imdbID).first()
 
-    def resolve_search(sef, info, title, result):
+    def resolve_search(self, info, title, result):
         tsquery = func.to_tsquery(f'\'{title}\'')
         query = (
             session
