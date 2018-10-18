@@ -27,15 +27,19 @@ class Title(graphene.Interface):
     averageRating = graphene.Float()
     numVotes = graphene.Int()
 
+exclude_fields = ('title_search_col', '_type', )
+
 class Movie(SQLAlchemyObjectType):
     class Meta:
         model = MovieModel
         interfaces = (Title, )
+        exclude_fields = exclude_fields
 
 class Episode(SQLAlchemyObjectType):
     class Meta:
         model = EpisodeModel
         interfaces = (Title, )
+        exclude_fields = exclude_fields
 
     seasonNumber = graphene.Int()
     episodeNumber = graphene.Int()
@@ -44,6 +48,7 @@ class Series(SQLAlchemyObjectType):
     class Meta:
         model = SeriesModel
         interfaces = (Title, )
+        exclude_fields = exclude_fields
 
     episodes = graphene.List(Episode)
 
