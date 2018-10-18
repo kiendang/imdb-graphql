@@ -6,7 +6,15 @@ schema {
   query: Query
 }
 
-type Episode implements Title {
+type Query {
+  title(imdbID: String!): Title
+  movie(imdbID: String!): Movie
+  series(imdbID: String!): Series
+  episode(imdbID: String!): Episode
+  search(title: String!, result: Int = 5): [Title]
+}
+
+interface Title {
   imdbID: String
   titleType: String
   primaryTitle: String
@@ -18,9 +26,6 @@ type Episode implements Title {
   genres: [String]
   averageRating: Float
   numVotes: Int
-  seasonNumber: Int
-  episodeNumber: Int
-  series: Series
 }
 
 type Movie implements Title {
@@ -35,14 +40,6 @@ type Movie implements Title {
   genres: [String]
   averageRating: Float
   numVotes: Int
-}
-
-type Query {
-  title(imdbID: String!): Title
-  movie(imdbID: String!): Movie
-  series(imdbID: String!): Series
-  episode(imdbID: String!): Episode
-  search(title: String!, result: Int = 5): [Title]
 }
 
 type Series implements Title {
@@ -61,7 +58,7 @@ type Series implements Title {
   totalSeasons: Int
 }
 
-interface Title {
+type Episode implements Title {
   imdbID: String
   titleType: String
   primaryTitle: String
@@ -73,5 +70,8 @@ interface Title {
   genres: [String]
   averageRating: Float
   numVotes: Int
+  seasonNumber: Int
+  episodeNumber: Int
+  series: Series
 }
 ```
