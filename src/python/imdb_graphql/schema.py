@@ -35,24 +35,6 @@ class Movie(SQLAlchemyObjectType):
         interfaces = (Title, )
         exclude_fields = exclude_fields
 
-class Series(SQLAlchemyObjectType):
-    class Meta:
-        model = SeriesModel
-        interfaces = (Title, )
-        exclude_fields = exclude_fields
-
-    episodes = graphene.List(lambda: Episode)
-
-    def resolve_episodes(self, info):
-        return(
-            Episode
-            .get_query(info)
-            .join(EpisodeModel.info)
-            .filter_by(seriesID=self.imdbID)
-            .order_by(EpisodeInfoModel.seasonNumber,
-                EpisodeInfoModel.episodeNumber)
-        )
-
 class Episode(SQLAlchemyObjectType):
     class Meta:
         model = EpisodeModel
@@ -61,7 +43,44 @@ class Episode(SQLAlchemyObjectType):
 
     seasonNumber = graphene.Int()
     episodeNumber = graphene.Int()
-    series = graphene.Field(Series)
+    series = graphene.Field(lambda: Series)
+
+class Series(SQLAlchemyObjectType):
+    class Meta:
+        model = SeriesModel
+        interfaces = (Title, )
+        exclude_fields = exclude_fields
+
+    episodes = graphene.Field(graphene.List(Episode), season=graphene.Int())
+    totalSeasons = graphene.Int()
+
+    def resolve_episodes(self, info, **args):
+        q = (
+            Episode
+            .get_query(info)
+            .join(EpisodeModel.info)
+            .filter_by(seriesID=self.imdbID)
+        )
+
+        q = (
+            q
+            .filter_by(seasonNumber=args['season'])
+            .order_by(EpisodeInfoModel.episodeNumber)
+        ) if 'season' in args else (
+            q.order_by(EpisodeInfoModel.seasonNumber,
+                EpisodeInfoModel.episodeNumber)
+        )
+        
+        return q
+
+    def resolve_totalSeasons(self, info):
+        return(
+            session
+            .query(EpisodeInfoModel.seasonNumber)
+            .filter_by(seriesID=self.imdbID)
+            .group_by(EpisodeInfoModel.seasonNumber)
+            .count()
+        )
 
 class Query(graphene.ObjectType):
     title = graphene.Field(Title, imdbID=graphene.String(required=True))
