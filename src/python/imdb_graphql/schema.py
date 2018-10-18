@@ -35,22 +35,13 @@ class Movie(SQLAlchemyObjectType):
         interfaces = (Title, )
         exclude_fields = exclude_fields
 
-class Episode(SQLAlchemyObjectType):
-    class Meta:
-        model = EpisodeModel
-        interfaces = (Title, )
-        exclude_fields = exclude_fields
-
-    seasonNumber = graphene.Int()
-    episodeNumber = graphene.Int()
-
 class Series(SQLAlchemyObjectType):
     class Meta:
         model = SeriesModel
         interfaces = (Title, )
         exclude_fields = exclude_fields
 
-    episodes = graphene.List(Episode)
+    episodes = graphene.List(lambda: Episode)
 
     def resolve_episodes(self, info):
         return(
@@ -61,6 +52,16 @@ class Series(SQLAlchemyObjectType):
             .order_by(EpisodeInfoModel.seasonNumber,
                 EpisodeInfoModel.episodeNumber)
         )
+
+class Episode(SQLAlchemyObjectType):
+    class Meta:
+        model = EpisodeModel
+        interfaces = (Title, )
+        exclude_fields = exclude_fields
+
+    seasonNumber = graphene.Int()
+    episodeNumber = graphene.Int()
+    series = graphene.Field(Series)
 
 class Query(graphene.ObjectType):
     title = graphene.Field(Title, imdbID=graphene.String())

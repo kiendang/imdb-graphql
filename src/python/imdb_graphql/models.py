@@ -59,6 +59,7 @@ class Episode(Title):
 
     seasonNumber = association_proxy('info', 'seasonNumber')
     episodeNumber = association_proxy('info', 'episodeNumber')
+    series = association_proxy('info', 'series')
 
 class EpisodeInfo(Base):
     __tablename__ = 'episodes'
