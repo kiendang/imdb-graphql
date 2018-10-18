@@ -51,7 +51,8 @@ class Series(SQLAlchemyObjectType):
         interfaces = (Title, )
         exclude_fields = exclude_fields
 
-    episodes = graphene.Field(graphene.List(Episode), season=graphene.Int())
+    episodes = graphene.Field(graphene.List(Episode),
+        season=graphene.List(graphene.Int))
     totalSeasons = graphene.Int()
 
     def resolve_episodes(self, info, **args):
@@ -62,15 +63,16 @@ class Series(SQLAlchemyObjectType):
             .filter_by(seriesID=self.imdbID)
         )
 
+        q = (q.filter(EpisodeInfoModel.seasonNumber.in_(args['season']))
+            if 'season' in args else q)
+
         q = (
-            q
-            .filter_by(seasonNumber=args['season'])
-            .order_by(EpisodeInfoModel.episodeNumber)
-        ) if 'season' in args else (
-            q.order_by(EpisodeInfoModel.seasonNumber,
-                EpisodeInfoModel.episodeNumber)
+            q.order_by(EpisodeInfoModel.episodeNumber,
+                EpisodeInfoModel.seasonNumber)
+            if 'season' in args and len(args['season']) > 1
+            else q.order_by(EpisodeInfoModel.episodeNumber)
         )
-        
+
         return q
 
     def resolve_totalSeasons(self, info):
