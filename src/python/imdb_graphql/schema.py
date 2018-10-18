@@ -67,8 +67,8 @@ class Series(SQLAlchemyObjectType):
             if 'season' in args else q)
 
         q = (
-            q.order_by(EpisodeInfoModel.episodeNumber,
-                EpisodeInfoModel.seasonNumber)
+            q.order_by(EpisodeInfoModel.seasonNumber,
+                EpisodeInfoModel.episodeNumber)
             if 'season' in args and len(args['season']) > 1
             else q.order_by(EpisodeInfoModel.episodeNumber)
         )
