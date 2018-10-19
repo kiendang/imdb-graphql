@@ -1,5 +1,4 @@
 from flask import Flask
-
 from flask_graphql import GraphQLView
 
 from .database import init_db, session

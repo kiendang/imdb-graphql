@@ -33,7 +33,6 @@ CREATE TRIGGER ts_vector_titles_trigger BEFORE INSERT OR UPDATE
     ON titles FOR EACH ROW EXECUTE PROCEDURE titles_trigger();
 
 
-
 DROP TABLE IF EXISTS akas CASCADE;
 CREATE TABLE akas (
     titleId char(9),
@@ -47,7 +46,6 @@ CREATE TABLE akas (
 );
 
 
-
 DROP TABLE IF EXISTS episodes CASCADE;
 CREATE TABLE episodes (
     tconst char(9) unique,
@@ -57,14 +55,12 @@ CREATE TABLE episodes (
 );
 
 
-
 DROP TABLE IF EXISTS ratings CASCADE;
 CREATE TABLE ratings (
     tconst char(9) unique,
     averageRating double precision,
     numVotes integer
 );
-
 
 
 DROP TABLE IF EXISTS people CASCADE;
@@ -78,7 +74,6 @@ CREATE TABLE people (
 );
 
 
-
 DROP TABLE IF EXISTS principals CASCADE;
 CREATE TABLE principals (
     tconst char(9),
@@ -88,7 +83,6 @@ CREATE TABLE principals (
     job text,
     character text
 );
-
 
 
 DROP TABLE IF EXISTS crew CASCADE;
