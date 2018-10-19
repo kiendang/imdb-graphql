@@ -11,7 +11,6 @@ from .models import (
     Rating as RatingModel,
     TitleType as TitleTypeEnum
 )
-from .database import session
 
 TitleType = graphene.Enum.from_enum(TitleTypeEnum)
 
@@ -77,8 +76,9 @@ class Series(SQLAlchemyObjectType):
 
     def resolve_totalSeasons(self, info):
         return(
-            session
-            .query(EpisodeInfoModel.seasonNumber)
+            EpisodeInfoModel
+            .query
+            .with_entities(EpisodeInfoModel.seasonNumber)
             .filter_by(seriesID=self.imdbID)
             .group_by(EpisodeInfoModel.seasonNumber)
             .count()
@@ -97,7 +97,7 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_title(self, info, imdbID):
-        return session.query(TitleModel).filter_by(imdbID=imdbID).first()
+        return TitleModel.query.filter_by(imdbID=imdbID).first()
 
     def resolve_movie(self, info, imdbID):
         return Movie.get_query(info).filter_by(imdbID=imdbID).first()
@@ -111,8 +111,8 @@ class Query(graphene.ObjectType):
     def resolve_search(self, info, title, types=None, result=None):
         tsquery = func.to_tsquery(f'\'{title}\'')
         query = (
-            session
-            .query(TitleModel)
+            TitleModel
+            .query
             .filter(TitleModel.title_search_col.op('@@')(tsquery))
         )
         query = (
