@@ -11,7 +11,7 @@ type Query {
   movie(imdbID: String!): Movie
   series(imdbID: String!): Series
   episode(imdbID: String!): Episode
-  search(title: String!, result: Int = 5): [Title]
+  search(title: String!, types: [TitleType], result: Int = 5): [Title]
 }
 
 interface Title {
@@ -73,5 +73,11 @@ type Episode implements Title {
   seasonNumber: Int
   episodeNumber: Int
   series: Series
+}
+
+enum TitleType {
+  MOVIE
+  SERIES
+  EPISODE
 }
 ```

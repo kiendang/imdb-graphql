@@ -1,8 +1,14 @@
 from sqlalchemy import case, Column, Integer, Float, String, ARRAY, ForeignKey
 from sqlalchemy.orm import column_property, relationship, backref
 from sqlalchemy.ext.associationproxy import association_proxy
+from enum import Enum
 
 from .database import Base
+
+class TitleType(Enum):
+    MOVIE = 'movie'
+    SERIES = 'series'
+    EPISODE = 'episode'
 
 class Title(Base):
     __tablename__ = 'titles'
