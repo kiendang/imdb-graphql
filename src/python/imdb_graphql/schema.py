@@ -12,7 +12,6 @@ from .models import (
     TitleType as TitleTypeEnum
 )
 from .database import session
-from .get_fields import get_fields
 
 TitleType = graphene.Enum.from_enum(TitleTypeEnum)
 
@@ -74,7 +73,6 @@ class Series(SQLAlchemyObjectType):
             if 'season' in args and len(args['season']) > 1
             else query.order_by(EpisodeInfoModel.episodeNumber)
         )
-
         return query
 
     def resolve_totalSeasons(self, info):
@@ -132,15 +130,6 @@ class Query(graphene.ObjectType):
             )
             .limit(result)
         )
-
         return query
-
-def query_to_item(cls, res, info):
-    model_fields = dir(res) 
-    schema_fields = (x[0] for x in cls._meta.fields.items())
-    info_fields = get_fields(info)
-    fields = set(info_fields) & set(schema_fields) & set(model_fields)
-    mappings = {k: res.__getattribute__(k) for k in fields}
-    return cls(**mappings)
 
 schema = graphene.Schema(query=Query, types=[Movie, Series, Episode])
