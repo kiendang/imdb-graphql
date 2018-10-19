@@ -52,9 +52,9 @@ class Series(SQLAlchemyObjectType):
         interfaces = (Title, )
         exclude_fields = exclude_fields
 
+    totalSeasons = graphene.Int()
     episodes = graphene.Field(graphene.List(Episode),
         season=graphene.List(graphene.Int))
-    totalSeasons = graphene.Int()
 
     def resolve_episodes(self, info, **args):
         query = (

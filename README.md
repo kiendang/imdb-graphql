@@ -54,8 +54,8 @@ type Series implements Title {
   genres: [String]
   averageRating: Float
   numVotes: Int
-  episodes(season: [Int]): [Episode]
   totalSeasons: Int
+  episodes(season: [Int]): [Episode]
 }
 
 type Episode implements Title {
