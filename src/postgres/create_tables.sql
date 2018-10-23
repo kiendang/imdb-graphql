@@ -13,7 +13,7 @@ CREATE TABLE titles (
 
 ALTER TABLE titles ADD COLUMN title_search_col tsvector;
 UPDATE titles SET title_search_col =
-     to_tsvector('english', coalesce(primaryTitle,'') || ' ' || coalesce(originalTitle,''));
+    to_tsvector('english', coalesce(primaryTitle,'') || ' ' || coalesce(originalTitle,''));
 
 CREATE INDEX title_idx ON titles USING GIN (title_search_col);
 UPDATE titles SET title_search_col =
@@ -72,6 +72,16 @@ CREATE TABLE people (
     primaryProfession varchar(50)[],
     knownForTitles char(9)[]
 );
+
+ALTER TABLE people ADD COLUMN people_search_col tsvector;
+UPDATE people SET people_search_col =
+    to_tsvector('english', coalesce(primaryName,''));
+
+CREATE INDEX people_idx ON people USING GIN (people_search_col);
+
+CREATE TRIGGER ts_vector_people_update BEFORE INSERT OR UPDATE
+    ON people FOR EACH ROW EXECUTE PROCEDURE
+    tsvector_update_trigger(people_search_col, 'pg_catalog.english', primaryName);
 
 
 DROP TABLE IF EXISTS principals CASCADE;
