@@ -13,6 +13,7 @@ session = scoped_session(sessionmaker(
 Base = declarative_base()
 Base.query = session.query_property()
 
+
 def init_db():
     from models import Title, Movie, Series, Episode, EpisodeInfo, Rating
     Base.metadata.reflect(engine)

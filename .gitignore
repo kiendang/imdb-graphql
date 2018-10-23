@@ -5,7 +5,8 @@ __pycache__
 .ipynb_checkpoints
 *.egg-info
 .vimrc
-.sublime-project
+*.sublime-project
+*.sublime-workspace
 *.tsv
 *.gz
 *.swp

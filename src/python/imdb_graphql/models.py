@@ -1,14 +1,16 @@
-from sqlalchemy import case, Column, Integer, Float, String, ARRAY, ForeignKey
+from sqlalchemy import case, Column, Integer, Float, String, ARRAY
 from sqlalchemy.orm import column_property, relationship, backref
 from sqlalchemy.ext.associationproxy import association_proxy
 from enum import Enum
 
 from .database import Base
 
+
 class TitleType(Enum):
     MOVIE = 'movie'
     SERIES = 'series'
     EPISODE = 'episode'
+
 
 class Title(Base):
     __tablename__ = 'titles'
@@ -45,13 +47,16 @@ class Title(Base):
 
     __mapper_args__ = {'polymorphic_on': _type}
 
+
 class Movie(Title):
     __mapper_args__ = {'polymorphic_identity': 'movie'}
+
 
 class Series(Title):
     __mapper_args__ = {'polymorphic_identity': 'series'}
 
     episodes = association_proxy('_episodes', 'episode')
+
 
 class Episode(Title):
     __mapper_args__ = {'polymorphic_identity': 'episode'}
@@ -67,6 +72,7 @@ class Episode(Title):
     episodeNumber = association_proxy('info', 'episodeNumber')
     series = association_proxy('info', 'series')
 
+
 class EpisodeInfo(Base):
     __tablename__ = 'episodes'
 
@@ -80,6 +86,7 @@ class EpisodeInfo(Base):
         primaryjoin='Series.imdbID == EpisodeInfo.seriesID',
         backref=backref('_episodes', uselist=True)
     )
+
 
 class Rating(Base):
     __tablename__ = 'ratings'

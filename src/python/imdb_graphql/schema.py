@@ -14,6 +14,7 @@ from .models import (
 
 TitleType = graphene.Enum.from_enum(TitleTypeEnum)
 
+
 class Title(graphene.Interface):
     imdbID = graphene.String()
     titleType = graphene.String()
@@ -27,13 +28,16 @@ class Title(graphene.Interface):
     averageRating = graphene.Float()
     numVotes = graphene.Int()
 
+
 exclude_fields = ('title_search_col', '_type', )
+
 
 class Movie(SQLAlchemyObjectType):
     class Meta:
         model = MovieModel
         interfaces = (Title, )
         exclude_fields = exclude_fields
+
 
 class Episode(SQLAlchemyObjectType):
     class Meta:
@@ -45,6 +49,7 @@ class Episode(SQLAlchemyObjectType):
     episodeNumber = graphene.Int()
     series = graphene.Field(lambda: Series)
 
+
 class Series(SQLAlchemyObjectType):
     class Meta:
         model = SeriesModel
@@ -52,8 +57,10 @@ class Series(SQLAlchemyObjectType):
         exclude_fields = exclude_fields
 
     totalSeasons = graphene.Int()
-    episodes = graphene.Field(graphene.List(Episode),
-        season=graphene.List(graphene.Int))
+    episodes = graphene.Field(
+        graphene.List(Episode),
+        season=graphene.List(graphene.Int)
+    )
 
     def resolve_episodes(self, info, **args):
         query = (
@@ -67,8 +74,10 @@ class Series(SQLAlchemyObjectType):
             if 'season' in args else query
         )
         query = (
-            query.order_by(EpisodeInfoModel.seasonNumber,
-                EpisodeInfoModel.episodeNumber)
+            query.order_by(
+                EpisodeInfoModel.seasonNumber,
+                EpisodeInfoModel.episodeNumber
+            )
             if 'season' in args and len(args['season']) > 1
             else query.order_by(EpisodeInfoModel.episodeNumber)
         )
@@ -83,6 +92,7 @@ class Series(SQLAlchemyObjectType):
             .group_by(EpisodeInfoModel.seasonNumber)
             .count()
         )
+
 
 class Query(graphene.ObjectType):
     title = graphene.Field(Title, imdbID=graphene.String(required=True))
@@ -131,5 +141,6 @@ class Query(graphene.ObjectType):
             .limit(result)
         )
         return query
+
 
 schema = graphene.Schema(query=Query, types=[Movie, Series, Episode])
