@@ -1,19 +1,3 @@
-#' ---
-#' jupyter:
-#'   jupytext_format_version: '1.0'
-#'   kernelspec:
-#'     display_name: R
-#'     language: R
-#'     name: ir
-#'   language_info:
-#'     codemirror_mode: r
-#'     file_extension: .r
-#'     mimetype: text/x-r-source
-#'     name: R
-#'     pygments_lexer: r
-#'     version: 3.5.1
-#' ---
-
 library(tidyverse)
 
 source("read_imdb.R")
@@ -48,7 +32,7 @@ pg_import_format <- function(df, type) {
     if (! type %in% types) {
         stop("type must be one of %s", paste(types, collapse=","))
     }
-    
+
     if (type == "titles") pg_format_titles(df)
     else if (type == "akas") pg_format_akas(df)
     else if (type == "people") pg_format_people(df)
@@ -69,7 +53,7 @@ file_names <- types %>%
             k == "people" ~ "name",
             TRUE ~ "title"
         )
-        
+
         sprintf("%s.%s", prefix, v)
     }) %>%
     map_chr(~ sprintf("%s.tsv", .x))

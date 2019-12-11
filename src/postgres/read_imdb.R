@@ -1,19 +1,3 @@
-#' ---
-#' jupyter:
-#'   jupytext_format_version: '1.0'
-#'   kernelspec:
-#'     display_name: R
-#'     language: R
-#'     name: ir
-#'   language_info:
-#'     codemirror_mode: r
-#'     file_extension: .r
-#'     mimetype: text/x-r-source
-#'     name: R
-#'     pygments_lexer: r
-#'     version: 3.5.1
-#' ---
-
 read_imdb_tsv <- function(file) {
     data.table::fread(file, quote="", na="\\N", data.table=FALSE)
 }
@@ -24,9 +8,9 @@ read_imdb <- function(file, type) {
     if (! type %in% types) {
         stop("type must be one of %s", paste(types, collapse=","))
     }
-    
+
     df <- file %>% read_imdb_tsv
-    
+
     if (type == "titles") {
         df %>% mutate_at(vars(genres), strsplit, ",")
     } else if (type == "akas") {
