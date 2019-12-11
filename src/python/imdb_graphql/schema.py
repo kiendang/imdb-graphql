@@ -20,7 +20,7 @@ class Title(graphene.Interface):
     titleType = graphene.String()
     primaryTitle = graphene.String()
     originalTitle = graphene.String()
-    isAdult = graphene.Int()
+    isAdult = graphene.Boolean()
     startYear = graphene.Int()
     endYear = graphene.Int()
     runtime = graphene.Int()
