@@ -4,8 +4,6 @@ source("read_imdb.R")
 
 data_dir <- file.path("..", "..", "data")
 
-list.files(data_dir)
-
 pg_array <- function(x) ifelse(is.na(x) | x == "", NA, sprintf("{{%s}}", x))
 
 pg_format_titles <- function(df) df %>% mutate_at(vars(genres), pg_array)
@@ -57,8 +55,6 @@ file_names <- types %>%
         sprintf("%s.%s", prefix, v)
     }) %>%
     map_chr(~ sprintf("%s.tsv", .x))
-
-file_names
 
 data <- file_names %>% map(~ file.path(data_dir, .x) %>% read_imdb_tsv)
 
