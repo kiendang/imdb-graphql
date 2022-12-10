@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS titles CASCADE;
 CREATE TABLE titles (
-    tconst char(9) primary key,
+    tconst char(10) primary key,
     titleType varchar(20),
     primaryTitle text,
     originalTitle text,
@@ -14,7 +14,7 @@ CREATE TABLE titles (
 
 DROP TABLE IF EXISTS akas CASCADE;
 CREATE TABLE akas (
-    titleId char(9),
+    titleId char(10),
     ordering smallint,
     title text,
     region varchar(10),
@@ -27,8 +27,8 @@ CREATE TABLE akas (
 
 DROP TABLE IF EXISTS episodes CASCADE;
 CREATE TABLE episodes (
-    tconst char(9) unique,
-    parentTconst char(9),
+    tconst char(10) unique,
+    parentTconst char(10),
     seasonNumber integer,
     episodeNumber integer
 );
@@ -36,7 +36,7 @@ CREATE TABLE episodes (
 
 DROP TABLE IF EXISTS ratings CASCADE;
 CREATE TABLE ratings (
-    tconst char(9) unique,
+    tconst char(10) unique,
     averageRating double precision,
     numVotes integer
 );
@@ -55,7 +55,7 @@ CREATE TABLE people (
 
 DROP TABLE IF EXISTS principals CASCADE;
 CREATE TABLE principals (
-    tconst char(9),
+    tconst char(10),
     ordering integer,
     nconst varchar(10),
     category varchar(20),
@@ -66,7 +66,7 @@ CREATE TABLE principals (
 
 DROP TABLE IF EXISTS crew CASCADE;
 CREATE TABLE crew (
-    tconst char(9) unique,
+    tconst char(10) unique,
     directors varchar(10)[],
     writers varchar(10)[]
 );
