@@ -8,7 +8,7 @@ CREATE TABLE titles (
     startYear smallint,
     endYear smallint,
     runtimeMinutes integer,
-    genres varchar(20)[]
+    genres text
 );
 
 
@@ -19,15 +19,16 @@ CREATE TABLE akas (
     title text,
     region varchar(10),
     language varchar(10),
-    types varchar(20)[],
-    attributes text[],
-    isOriginalTitle smallint
+    types text,
+    attributes text,
+    isOriginalTitle smallint,
+    constraint akas_pk primary key (titleId, ordering)
 );
 
 
 DROP TABLE IF EXISTS episodes CASCADE;
 CREATE TABLE episodes (
-    tconst char(10) unique,
+    tconst char(10) primary key,
     parentTconst char(10),
     seasonNumber integer,
     episodeNumber integer
@@ -36,7 +37,7 @@ CREATE TABLE episodes (
 
 DROP TABLE IF EXISTS ratings CASCADE;
 CREATE TABLE ratings (
-    tconst char(10) unique,
+    tconst char(10) primary key,
     averageRating double precision,
     numVotes integer
 );
@@ -44,12 +45,12 @@ CREATE TABLE ratings (
 
 DROP TABLE IF EXISTS people CASCADE;
 CREATE TABLE people (
-    nconst varchar(10) primary key,
+    nconst char(10) primary key,
     primaryName text,
     birthYear smallint,
     deathYear smallint,
-    primaryProfession varchar(50)[],
-    knownForTitles char(9)[]
+    primaryProfession text,
+    knownForTitles text
 );
 
 
@@ -60,13 +61,14 @@ CREATE TABLE principals (
     nconst varchar(10),
     category varchar(20),
     job text,
-    character text
+    character text,
+    constraint principals_pk primary key (tconst, ordering)
 );
 
 
 DROP TABLE IF EXISTS crew CASCADE;
 CREATE TABLE crew (
-    tconst char(10) unique,
-    directors varchar(10)[],
-    writers varchar(10)[]
+    tconst char(10) primary key,
+    directors text,
+    writers text
 );
