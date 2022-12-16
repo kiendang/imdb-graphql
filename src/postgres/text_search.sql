@@ -9,10 +9,10 @@ UPDATE titles SET title_search_col =
 
 CREATE FUNCTION titles_trigger() RETURNS trigger AS $$
 begin
-  new.title_search_col :=
-     setweight(to_tsvector('pg_catalog.english', coalesce(new.primaryTitle,'')), 'A') ||
-     setweight(to_tsvector('pg_catalog.english', coalesce(new.originalTitle,'')), 'C');
-  return new;
+    new.title_search_col :=
+        setweight(to_tsvector('pg_catalog.english', coalesce(new.primaryTitle,'')), 'A') ||
+        setweight(to_tsvector('pg_catalog.english', coalesce(new.originalTitle,'')), 'C');
+    return new;
 end
 $$ LANGUAGE plpgsql;
 
