@@ -9,7 +9,7 @@ app.Debug = True
 
 default_query = '''
 {
-  movie(imdbID: "tt7040874") {
+  movie(imdbID: "tt0892769") {
     imdbID
   }
 }
@@ -17,7 +17,12 @@ default_query = '''
 
 app.add_url_rule(
     '/imdb',
-    view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True)
+    view_func=GraphQLView.as_view(
+      'graphql',
+      schema=schema,
+      default_query=default_query,
+      graphiql=True
+    )
 )
 
 
