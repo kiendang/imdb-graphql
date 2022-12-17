@@ -2,18 +2,22 @@
 name = "imdb-graphql"
 version = "0.1.0"
 description = "GraphQL API for IMDB"
-authors = ["kiendang <kiend@pm.me>"]
+authors = ["Kien Dang <mail@kien.ai>"]
+readme = "README.md"
+packages = [{include = "imdb_graphql"}]
 
 [tool.poetry.dependencies]
-python = "^3.6"
-sqlalchemy = "^1.2"
+python = ">=3.7"
 graphene = "^2.1"
-psycopg2-binary = "^2.7"
-flask = "^1.0"
-flask-graphql = "^2.0"
-graphene-sqlalchemy = "^2.1"
+graphene-sqlalchemy = "^2.3.0"
+sqlalchemy = "^1.4.45"
+flask-graphql = "^2.0.1"
+psycopg2-binary = "^2.9.5"
 
-[tool.poetry.dev-dependencies]
-pytest = "^3.0"
-ipython = "^6.5"
-python-language-server = "^0.21.2"
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+python-dotenv = "^0.21.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
