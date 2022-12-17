@@ -4,7 +4,7 @@ CREATE TABLE titles (
     titleType varchar(20),
     primaryTitle text,
     originalTitle text,
-    isAdult smallint,
+    isAdult boolean,
     startYear smallint,
     endYear smallint,
     runtimeMinutes integer,
