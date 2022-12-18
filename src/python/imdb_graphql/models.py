@@ -1,4 +1,4 @@
-from sqlalchemy import case, Column, Integer, Float, String, ARRAY
+from sqlalchemy import case, Column, Integer, Float, String, ARRAY, ForeignKey
 from sqlalchemy.orm import column_property, relationship, backref
 from sqlalchemy.ext.associationproxy import association_proxy
 from enum import Enum
@@ -35,12 +35,7 @@ class Title(Base):
     endYear = Column('endyear', Integer)
     runtime = Column('runtimeminutes', Integer)
     genres = Column('genres', ARRAY(String))
-    rating = relationship(
-        'Rating',
-        foreign_keys=imdbID,
-        primaryjoin='Title.imdbID == Rating.imdbID',
-        backref=backref('title', uselist=False)
-    )
+    rating = relationship('Rating', uselist=False)
     averageRating = association_proxy('rating', 'averageRating')
     numVotes = association_proxy('rating', 'numVotes')
     title_search_col = Column('title_search_col')
@@ -61,12 +56,7 @@ class Series(Title):
 class Episode(Title):
     __mapper_args__ = {'polymorphic_identity': 'episode'}
 
-    info = relationship(
-        'EpisodeInfo',
-        foreign_keys='Episode.imdbID',
-        primaryjoin='Episode.imdbID == EpisodeInfo.imdbID',
-        backref=backref('episode', uselist=False)
-    )
+    info = relationship('EpisodeInfo', uselist=False)
 
     seasonNumber = association_proxy('info', 'seasonNumber')
     episodeNumber = association_proxy('info', 'episodeNumber')
@@ -76,7 +66,7 @@ class Episode(Title):
 class EpisodeInfo(Base):
     __tablename__ = 'episodes'
 
-    imdbID = Column('tconst', String, primary_key=True)
+    imdbID = Column('tconst', String, ForeignKey(Episode.imdbID), primary_key=True)
     seriesID = Column('parenttconst', String)
     seasonNumber = Column('seasonnumber', Integer)
     episodeNumber = Column('episodenumber', Integer)
@@ -91,6 +81,6 @@ class EpisodeInfo(Base):
 class Rating(Base):
     __tablename__ = 'ratings'
 
-    imdbID = Column('tconst', String, primary_key=True)
+    imdbID = Column('tconst', String, ForeignKey(Title.imdbID), primary_key=True)
     averageRating = Column('averagerating', Float)
     numVotes = Column('numvotes', Integer)
