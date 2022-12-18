@@ -1,5 +1,5 @@
-from sqlalchemy import case, Column, Integer, Float, String, ARRAY, ForeignKey
-from sqlalchemy.orm import column_property, relationship, backref
+from sqlalchemy import case, Column, Integer, Float, ForeignKey, String, ARRAY
+from sqlalchemy.orm import column_property, relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from enum import Enum
 
@@ -50,7 +50,7 @@ class Movie(Title):
 class Series(Title):
     __mapper_args__ = {'polymorphic_identity': 'series'}
 
-    episodes = association_proxy('_episodes', 'episode')
+    episodes = relationship('EpisodeInfo')
 
 
 class Episode(Title):
@@ -73,8 +73,7 @@ class EpisodeInfo(Base):
     series = relationship(
         'Series',
         foreign_keys=seriesID,
-        primaryjoin='Series.imdbID == EpisodeInfo.seriesID',
-        backref=backref('_episodes', uselist=True)
+        primaryjoin='Series.imdbID == EpisodeInfo.seriesID'
     )
 
 
