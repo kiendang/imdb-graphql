@@ -8,6 +8,7 @@ packages = [{include = "imdb_graphql"}]
 
 [tool.poetry.dependencies]
 python = ">=3.7"
+flask = "^2.2.2"
 graphene = "^2.1"
 graphene-sqlalchemy = "^2.3.0"
 sqlalchemy = "^1.4.45"
