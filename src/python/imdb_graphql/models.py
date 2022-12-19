@@ -20,13 +20,9 @@ class Title(Base):
     titleType = Column('titletype', String)
     _type = column_property(
         case(
-            {
-                'tvSeries': 'series',
-                'tvMiniSeries': 'series',
-                'tvEpisode': 'episode'
-            },
+            {'tvSeries': 'series', 'tvMiniSeries': 'series', 'tvEpisode': 'episode'},
             value=titleType,
-            else_='movie'
+            else_='movie',
         )
     )
     primaryTitle = Column('primarytitle', String)
@@ -72,9 +68,7 @@ class EpisodeInfo(Base):
     seasonNumber = Column('seasonnumber', Integer)
     episodeNumber = Column('episodenumber', Integer)
     series = relationship(
-        Series,
-        foreign_keys=seriesID,
-        primaryjoin=Series.imdbID==seriesID
+        Series, foreign_keys=seriesID, primaryjoin=Series.imdbID == seriesID
     )
 
 

@@ -18,11 +18,8 @@ default_query = '''
 app.add_url_rule(
     '/imdb',
     view_func=GraphQLView.as_view(
-      'graphql',
-      schema=schema,
-      default_query=default_query,
-      graphiql=True
-    )
+        'graphql', schema=schema, default_query=default_query, graphiql=True
+    ),
 )
 
 
