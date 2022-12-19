@@ -1,6 +1,6 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from sqlalchemy import bindparam, func, desc
+from sqlalchemy import func, desc
 
 from .models import (
     Title as TitleModel,
@@ -105,43 +105,19 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_title(self, info, imdbID):
-        return (
-            TitleModel
-            .query
-            .filter_by(imdbID=bindparam('imdbid'))
-            .params(imdbid=imdbID)
-            .first()
-        )
+        return TitleModel.query.filter_by(imdbID=imdbID).first()
 
     def resolve_movie(self, info, imdbID):
-        return (
-            Movie
-            .get_query(info)
-            .filter_by(imdbID=bindparam('imdbid'))
-            .params(imdbid=imdbID)
-            .first()
-        )
+        return Movie.get_query(info).filter_by(imdbID=imdbID).first()
 
     def resolve_series(self, info, imdbID):
-        return (
-            Series
-            .get_query(info)
-            .filter_by(imdbID=bindparam('imdbid'))
-            .params(imdbid=imdbID)
-            .first()
-        )
+        return Series.get_query(info).filter_by(imdbID=imdbID).first()
 
     def resolve_episode(self, info, imdbID):
-        return (
-            Episode
-            .get_query(info)
-            .filter_by(imdbID=bindparam('imdbid'))
-            .params(imdbid=imdbID)
-            .first()
-        )
+        return Episode.get_query(info).filter_by(imdbID=imdbID).first()
 
     def resolve_search(self, info, title, types=None, result=None):
-        tsquery = func.to_tsquery(bindparam('title')).params(title=f"'{title}'")
+        tsquery = func.to_tsquery(f'\'{title}\'')
         title_search_filter = TitleModel.title_search_col.op('@@')(tsquery)
         type_filter = (
             (TitleModel._type.in_(types), )
