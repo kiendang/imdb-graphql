@@ -38,7 +38,7 @@ CREATE TABLE episodes (
 DROP TABLE IF EXISTS ratings CASCADE;
 CREATE TABLE ratings (
     tconst char(10) primary key,
-    averageRating numeric(2),
+    averageRating real,
     numVotes integer
 );
 

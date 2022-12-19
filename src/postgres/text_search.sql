@@ -16,9 +16,9 @@ begin
 end
 $$ LANGUAGE plpgsql;
 
-
 CREATE TRIGGER ts_vector_titles_trigger BEFORE INSERT OR UPDATE
     ON titles FOR EACH ROW EXECUTE PROCEDURE titles_trigger();
+
 
 ALTER TABLE people ADD COLUMN people_search_col tsvector;
 UPDATE people SET people_search_col =
