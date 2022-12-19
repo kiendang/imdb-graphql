@@ -132,7 +132,7 @@ class Query(graphene.ObjectType):
             .join(TitleModel.rating)
             .order_by(
                 desc(RatingModel.numVotes >= 1000),
-                desc(TitleModel.primaryTitle.ilike(title)),
+                desc(TitleModel.primaryTitle.ilike(f'%{title}%')),
                 desc(RatingModel.numVotes),
                 desc(func.ts_rank_cd(TitleModel.title_search_col, tsquery, 1))
             )
