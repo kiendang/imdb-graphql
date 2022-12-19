@@ -62,26 +62,24 @@ class Series(SQLAlchemyObjectType):
         season=graphene.List(graphene.Int)
     )
 
-    def resolve_episodes(self, info, **args):
-        query = (
+    def resolve_episodes(self, info, season=None):
+        imdbid_filter = EpisodeInfoModel.seriesID==self.imdbID
+        season_filter = (
+            (EpisodeInfoModel.seasonNumber.in_(season), )
+            if season is not None
+            else tuple()
+        )
+
+        return (
             Episode
             .get_query(info)
             .join(EpisodeModel.info)
-            .filter_by(seriesID=self.imdbID)
-        )
-        query = (
-            query.filter(EpisodeInfoModel.seasonNumber.in_(args['season']))
-            if 'season' in args else query
-        )
-        query = (
-            query.order_by(
+            .filter(imdbid_filter, *season_filter)
+            .order_by(
                 EpisodeInfoModel.seasonNumber,
                 EpisodeInfoModel.episodeNumber
             )
-            if 'season' in args and len(args['season']) > 1
-            else query.order_by(EpisodeInfoModel.episodeNumber)
         )
-        return query
 
     def resolve_totalSeasons(self, info):
         return(
@@ -120,17 +118,17 @@ class Query(graphene.ObjectType):
 
     def resolve_search(self, info, title, types=None, result=None):
         tsquery = func.to_tsquery(f'\'{title}\'')
-        query = (
+        title_search_filter = TitleModel.title_search_col.op('@@')(tsquery)
+        type_filter = (
+            (TitleModel._type.in_(types), )
+            if types is not None
+            else tuple()
+        )
+
+        return (
             TitleModel
             .query
-            .filter(TitleModel.title_search_col.op('@@')(tsquery))
-        )
-        query = (
-            query.filter(TitleModel._type.in_(types))
-            if types is not None else query
-        )
-        query = (
-            query
+            .filter(title_search_filter, *type_filter)
             .join(TitleModel.rating)
             .order_by(
                 desc(RatingModel.numVotes >= 1000),
@@ -140,7 +138,6 @@ class Query(graphene.ObjectType):
             )
             .limit(result)
         )
-        return query
 
 
 schema = graphene.Schema(query=Query, types=[Movie, Series, Episode])
