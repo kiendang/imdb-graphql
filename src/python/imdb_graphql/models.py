@@ -1,7 +1,8 @@
-from sqlalchemy import case, Column, Integer, Float, ForeignKey, String, ARRAY
-from sqlalchemy.orm import column_property, relationship
-from sqlalchemy.ext.associationproxy import association_proxy
 from enum import Enum
+
+from sqlalchemy import ARRAY, Column, Float, ForeignKey, Integer, String, case
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import column_property, relationship
 
 from .database import Base
 
@@ -35,7 +36,7 @@ class Title(Base):
     endYear = Column('endyear', Integer)
     runtime = Column('runtimeminutes', Integer)
     genres = Column('genres', ARRAY(String))
-    rating = relationship('Rating', uselist=False)
+    rating = relationship(lambda: Rating, uselist=False)
     averageRating = association_proxy('rating', 'averageRating')
     numVotes = association_proxy('rating', 'numVotes')
     title_search_col = Column('title_search_col')
@@ -50,13 +51,13 @@ class Movie(Title):
 class Series(Title):
     __mapper_args__ = {'polymorphic_identity': 'series'}
 
-    episodes = relationship('EpisodeInfo')
+    episodes = relationship(lambda: EpisodeInfo)
 
 
 class Episode(Title):
     __mapper_args__ = {'polymorphic_identity': 'episode'}
 
-    info = relationship('EpisodeInfo', uselist=False)
+    info = relationship(lambda: EpisodeInfo, uselist=False)
 
     seasonNumber = association_proxy('info', 'seasonNumber')
     episodeNumber = association_proxy('info', 'episodeNumber')
@@ -71,9 +72,9 @@ class EpisodeInfo(Base):
     seasonNumber = Column('seasonnumber', Integer)
     episodeNumber = Column('episodenumber', Integer)
     series = relationship(
-        'Series',
+        Series,
         foreign_keys=seriesID,
-        primaryjoin='Series.imdbID == EpisodeInfo.seriesID'
+        primaryjoin=Series.imdbID==seriesID
     )
 
 
