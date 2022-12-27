@@ -119,7 +119,11 @@ class Query(graphene.ObjectType):
     def resolve_search(self, info, title, types=None, result=None):
         tsquery = func.to_tsquery(f'\'{title}\'')
         title_search_filter = TitleModel.title_search_col.op('@@')(tsquery)
-        type_filter = (TitleModel._type.in_(types),) if types is not None else tuple()
+        type_filter = (
+            (TitleModel._type.in_(t.value for t in types),)
+            if types is not None
+            else tuple()
+        )
 
         return (
             TitleModel.query.filter(title_search_filter, *type_filter)
