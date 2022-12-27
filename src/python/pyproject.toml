@@ -7,12 +7,12 @@ readme = "README.md"
 packages = [{include = "imdb_graphql"}]
 
 [tool.poetry.dependencies]
-python = ">=3.7"
+python = "^3.7"
 flask = "^2.2.2"
-graphene = "^2.1"
-graphene-sqlalchemy = "^2.3.0"
+graphene = "^3.2.1"
 sqlalchemy = "^1.4.45"
-flask-graphql = "^2.0.1"
+graphql-server = {version = "^3.0.0b6", extras = ["flask"]}
+graphene-sqlalchemy = {git = "https://github.com/graphql-python/graphene-sqlalchemy.git", rev = "d0668cc82dfd349aa418dd6fc16d54e80162960a"}
 psycopg2-binary = "^2.9.5"
 
 [tool.poetry.group.dev.dependencies]
