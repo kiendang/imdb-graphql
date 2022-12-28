@@ -16,25 +16,25 @@ class TitleType(Enum):
 class Title(Base):
     __tablename__ = 'titles'
 
-    imdbID = Column('tconst', String, primary_key=True)
-    titleType = Column('titletype', String)
+    imdb_id = Column('tconst', String, primary_key=True)
+    title_type = Column('titletype', String)
     _type = column_property(
         case(
             {'tvSeries': 'series', 'tvMiniSeries': 'series', 'tvEpisode': 'episode'},
-            value=titleType,
+            value=title_type,
             else_='movie',
         )
     )
-    primaryTitle = Column('primarytitle', String)
-    originalTitle = Column('originaltitle', String)
-    isAdult = Column('isadult', Integer)
-    startYear = Column('startyear', Integer)
-    endYear = Column('endyear', Integer)
+    primary_title = Column('primarytitle', String)
+    original_title = Column('originaltitle', String)
+    is_adult = Column('isadult', Integer)
+    start_year = Column('startyear', Integer)
+    end_year = Column('endyear', Integer)
     runtime = Column('runtimeminutes', Integer)
     genres = Column('genres', ARRAY(String))
     rating = relationship(lambda: Rating, uselist=False)
-    averageRating = association_proxy('rating', 'averageRating')
-    numVotes = association_proxy('rating', 'numVotes')
+    average_rating = association_proxy('rating', 'average_rating')
+    num_votes = association_proxy('rating', 'num_votes')
     title_search_col = Column('title_search_col')
 
     __mapper_args__ = {'polymorphic_on': _type}
@@ -55,26 +55,26 @@ class Episode(Title):
 
     info = relationship(lambda: EpisodeInfo, uselist=False)
 
-    seasonNumber = association_proxy('info', 'seasonNumber')
-    episodeNumber = association_proxy('info', 'episodeNumber')
+    season_number = association_proxy('info', 'season_number')
+    episode_number = association_proxy('info', 'episode_number')
     series = association_proxy('info', 'series')
 
 
 class EpisodeInfo(Base):
     __tablename__ = 'episodes'
 
-    imdbID = Column('tconst', String, ForeignKey(Episode.imdbID), primary_key=True)
-    seriesID = Column('parenttconst', String)
-    seasonNumber = Column('seasonnumber', Integer)
-    episodeNumber = Column('episodenumber', Integer)
+    imdb_id = Column('tconst', String, ForeignKey(Episode.imdb_id), primary_key=True)
+    series_id = Column('parenttconst', String)
+    season_number = Column('seasonnumber', Integer)
+    episode_number = Column('episodenumber', Integer)
     series = relationship(
-        Series, foreign_keys=seriesID, primaryjoin=Series.imdbID == seriesID
+        Series, foreign_keys=series_id, primaryjoin=Series.imdb_id == series_id
     )
 
 
 class Rating(Base):
     __tablename__ = 'ratings'
 
-    imdbID = Column('tconst', String, ForeignKey(Title.imdbID), primary_key=True)
-    averageRating = Column('averagerating', Float)
-    numVotes = Column('numvotes', Integer)
+    imdb_id = Column('tconst', String, ForeignKey(Title.imdb_id), primary_key=True)
+    average_rating = Column('averagerating', Float)
+    num_votes = Column('numvotes', Integer)
