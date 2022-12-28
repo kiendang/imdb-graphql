@@ -19,7 +19,7 @@ interface Title {
   titleType: String
   primaryTitle: String
   originalTitle: String
-  isAdult: Int
+  isAdult: Boolean
   startYear: Int
   endYear: Int
   runtime: Int
@@ -33,7 +33,7 @@ type Movie implements Title {
   titleType: String
   primaryTitle: String
   originalTitle: String
-  isAdult: Int
+  isAdult: Boolean
   startYear: Int
   endYear: Int
   runtime: Int
@@ -47,15 +47,15 @@ type Series implements Title {
   titleType: String
   primaryTitle: String
   originalTitle: String
-  isAdult: Int
+  isAdult: Boolean
   startYear: Int
   endYear: Int
   runtime: Int
   genres: [String]
+  episodes(season: [Int]): [Episode]
   averageRating: Float
   numVotes: Int
   totalSeasons: Int
-  episodes(season: [Int]): [Episode]
 }
 
 type Episode implements Title {
@@ -63,7 +63,7 @@ type Episode implements Title {
   titleType: String
   primaryTitle: String
   originalTitle: String
-  isAdult: Int
+  isAdult: Boolean
   startYear: Int
   endYear: Int
   runtime: Int
