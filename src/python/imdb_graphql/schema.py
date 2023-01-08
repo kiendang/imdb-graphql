@@ -1,6 +1,7 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from sqlalchemy import desc, func
+from graphene_sqlalchemy.utils import get_session
+from sqlalchemy import desc, distinct, func, select
 
 from .models import (
     Episode as EpisodeModel,
@@ -64,7 +65,9 @@ class Series(SQLAlchemyObjectType):
         graphene.List(Episode), season=graphene.List(graphene.Int)
     )
 
-    def resolve_episodes(self, info, season=None):
+    async def resolve_episodes(self, info, season=None):
+        session = get_session(info.context)
+
         imdbid_filter = EpisodeInfoModel.series_id == self.imdb_id
         season_filter = (
             (EpisodeInfoModel.season_number.in_(season),)
@@ -72,19 +75,19 @@ class Series(SQLAlchemyObjectType):
             else tuple()
         )
 
-        return (
+        return await session.scalars(
             Episode.get_query(info)
             .join(EpisodeModel.info)
             .filter(imdbid_filter, *season_filter)
             .order_by(EpisodeInfoModel.season_number, EpisodeInfoModel.episode_number)
         )
 
-    def resolve_totalSeasons(self, info):
-        return (
-            EpisodeInfoModel.query.with_entities(EpisodeInfoModel.season_number)
-            .filter_by(series_id=self.imdb_id)
-            .group_by(EpisodeInfoModel.season_number)
-            .count()
+    async def resolve_total_seasons(self, info):
+        session = get_session(info.context)
+        return await session.scalar(
+            select(func.count(distinct(EpisodeInfoModel.season_number))).filter(
+                EpisodeInfoModel.series_id == self.imdb_id
+            )
         )
 
 
@@ -104,19 +107,34 @@ class Query(graphene.ObjectType):
         result=graphene.Int(default_value=5),
     )
 
-    def resolve_title(self, info, imdb_id):
-        return TitleModel.query.filter_by(imdb_id=imdb_id).first()
+    async def resolve_title(self, info, imdb_id):
+        session = get_session(info.context)
+        return await session.scalar(
+            select(TitleModel).filter_by(imdb_id=imdb_id).limit(1)
+        )
 
-    def resolve_movie(self, info, imdb_id):
-        return Movie.get_query(info).filter_by(imdb_id=imdb_id).first()
+    async def resolve_movie(self, info, imdb_id):
+        session = get_session(info.context)
+        return await session.scalar(
+            Movie.get_query(info).filter_by(imdb_id=imdb_id).limit(1)
+        )
 
-    def resolve_series(self, info, imdb_id):
-        return Series.get_query(info).filter_by(imdb_id=imdb_id).first()
+    async def resolve_series(self, info, imdb_id):
+        session = get_session(info.context)
+        result = await session.scalar(
+            Series.get_query(info).filter_by(imdb_id=imdb_id).limit(1)
+        )
+        return result
 
-    def resolve_episode(self, info, imdb_id):
-        return Episode.get_query(info).filter_by(imdb_id=imdb_id).first()
+    async def resolve_episode(self, info, imdb_id):
+        session = get_session(info.context)
+        return await session.scalar(
+            Episode.get_query(info).filter_by(imdb_id=imdb_id).limit(1)
+        )
 
-    def resolve_search(self, info, title, types=None, result=None):
+    async def resolve_search(self, info, title, types=None, result=None):
+        session = get_session(info.context)
+
         tsquery = func.to_tsquery(f'\'{title}\'')
         title_search_filter = TitleModel.title_search_col.op('@@')(tsquery)
         type_filter = (
@@ -125,8 +143,9 @@ class Query(graphene.ObjectType):
             else tuple()
         )
 
-        return (
-            TitleModel.query.filter(title_search_filter, *type_filter)
+        return await session.scalars(
+            select(TitleModel)
+            .filter(title_search_filter, *type_filter)
             .join(TitleModel.rating)
             .order_by(
                 desc(RatingModel.num_votes >= 1000),

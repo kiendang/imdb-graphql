@@ -37,7 +37,7 @@ class Title(Base):
     num_votes = association_proxy('rating', 'num_votes')
     title_search_col = Column('title_search_col')
 
-    __mapper_args__ = {'polymorphic_on': _type}
+    __mapper_args__ = {'polymorphic_on': _type, 'with_polymorphic': '*'}
 
 
 class Movie(Title):

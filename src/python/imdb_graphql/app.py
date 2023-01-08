@@ -1,7 +1,7 @@
 from flask import Flask
 from graphql_server.flask import GraphQLView
 
-from .database import init_db, session
+from .database import engine, init_db, session
 from .schema import schema
 
 app = Flask(__name__)
@@ -15,17 +15,23 @@ default_query = '''
 }
 '''.strip()
 
+
 app.add_url_rule(
     '/imdb',
     view_func=GraphQLView.as_view(
-        'graphql', schema=schema, default_query=default_query, graphiql=True
+        'graphql',
+        schema=schema,
+        enable_async=True,
+        context={'session': session},
+        default_query=default_query,
+        graphiql=True,
     ),
 )
 
 
 @app.teardown_appcontext
-def shutdown_session(exception=None):
-    session.remove()
+async def shutdown_session(exception=None):
+    await engine.dispose()
 
 
 if __name__ == '__main__':

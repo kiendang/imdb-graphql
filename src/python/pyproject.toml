@@ -8,12 +8,13 @@ packages = [{include = "imdb_graphql"}]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-flask = "^2.2.2"
+flask = {version = "^2.2.2", extras = ["async"]}
 graphene = "^3.2.1"
-sqlalchemy = "^1.4.45"
+sqlalchemy = {version = "^1.4.45", extras = ["asyncio"]}
 graphql-server = {path = "/Users/kien/graphql-server", extras = ["flask"], develop = true}
-graphene-sqlalchemy = {version = "^3.0.0b3", allow-prereleases = true}
+graphene-sqlalchemy = {git = "https://github.com/graphql-python/graphene-sqlalchemy"}
 psycopg2-binary = "^2.9.5"
+asyncpg = "^0.27.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"

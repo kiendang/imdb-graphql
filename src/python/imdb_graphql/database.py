@@ -1,15 +1,23 @@
 import os
+from asyncio import current_task
 
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_scoped_session,
+    create_async_engine,
+)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
-engine = create_engine(os.environ['DB_CONNECTION'])
+engine = create_async_engine(os.environ['DB_CONNECTION'])
 
-session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+SessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+session = async_scoped_session(
+    SessionLocal,
+    scopefunc=current_task,
+)
 
 Base = declarative_base()
-Base.query = session.query_property()
 
 
 def init_db():
