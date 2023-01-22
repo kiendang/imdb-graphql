@@ -1,10 +1,12 @@
 from flask import Flask
+from flask_cors import CORS
 from graphql_server.flask import GraphQLView
 
 from .database import init_db, session
 from .schema import schema
 
 app = Flask(__name__)
+CORS(app)
 app.Debug = True
 
 default_query = '''
