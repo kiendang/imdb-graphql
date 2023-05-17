@@ -81,3 +81,43 @@ enum TitleType {
   EPISODE
 }
 ```
+
+### Example queries
+
+```graphql
+{
+  title(imdbID: "<IMDB_ID>") {
+    primaryTitle
+    startYear
+    endYear
+    averageRating
+    ... on Series {
+      episodes {
+        seasonNumber
+        episodeNumber
+        primaryTitle
+        averageRating
+      }
+    }
+  }
+}
+```
+
+```graphql
+{
+  search(title: "<TITLE>") {
+    ... on Series {
+      primaryTitle
+      startYear
+      endYear
+      averageRating
+      episodes {
+        seasonNumber
+        episodeNumber
+        primaryTitle
+        averageRating
+      }
+    }
+  }
+}
+```
