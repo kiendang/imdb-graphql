@@ -1,0 +1,13 @@
+{
+  "python.formatting.provider": "black",
+  "isort.check": true,
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    },
+  },
+  "isort.args": [
+    "--settings-path",
+    "${workspaceFolder}/src/python/pyproject.toml"
+  ]
+}
